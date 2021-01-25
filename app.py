@@ -10,6 +10,10 @@ import plotly.express as px
 
 plt.rcParams["font.size"] = 18
 HOP = 1000
+BACKGROUND_COLOR = "rgb(17,17,17)"
+COLOR = "#fff"
+GRAPH_WIDTH = 1200
+GRAPH_HEIGHT = 400
 
 @st.cache
 def calc_melspectrogram(wav, sr, win_len, hop_len, n_mel):
@@ -24,14 +28,44 @@ def calc_spectrum(wav, sr):
     s_power = np.abs(spectrum)
     return s_power, freqs
 
+@st.cache
 def move_ave(ts,win):
     ts_pad =np.pad(ts,[int(win/2),int(win/2)],'reflect')
     return np.convolve(ts_pad,np.full(win,1/win),mode='same')[int(win/2):-int(win/2)]
+
+def _set_block_container_style(
+    max_width: int = GRAPH_WIDTH+100,
+    max_width_100_percent: bool = False,
+    padding_top: int = 5,
+    padding_right: int = 1,
+    padding_left: int = 1,
+    padding_bottom: int = 10,
+):
+    if max_width_100_percent:
+        max_width_str = f"max-width: 100%;"
+    else:
+        max_width_str = f"max-width: {max_width}px;"
+    st.markdown(
+        f"""
+<style>
+    .reportview-container .main .block-container{{
+        {max_width_str}
+        padding-top: {padding_top}rem;
+        padding-right: {padding_right}rem;
+        padding-left: {padding_left}rem;
+        padding-bottom: {padding_bottom}rem;
+    }}
+
+</style>
+""",
+        unsafe_allow_html=True,
+    )
 
 def main():
 
     st.title('audio visualizer')
     uploaded_file = st.sidebar.file_uploader("audio file upload") 
+    
 
     if uploaded_file is not None:
         wav, sr = librosa.load(uploaded_file, sr=None)
@@ -54,7 +88,7 @@ def main():
         fig.add_trace(go.Scatter(y=wav[::HOP], name="wav"))
         fig.add_vrect(x0=int(tgt_ranges[0]*sr/HOP), x1=int(tgt_ranges[1]*sr/HOP), fillcolor="LightSalmon", opacity=0.5,
                     layer="below", line_width=0)
-        fig.update_layout(title="sound waveform", width=800, height=400,
+        fig.update_layout(title="sound waveform", width=GRAPH_WIDTH, height=GRAPH_HEIGHT,
                     xaxis = dict(
                     tickmode = 'array',
                     tickvals = [1, int(len(wav[::HOP])/2), len(wav[::HOP])],
@@ -70,7 +104,7 @@ def main():
         mel_bins = librosa.mel_frequencies(n_mel, 0, int(sr/2))
 
         fig = px.imshow(np.flipud(mel), aspect='auto')
-        fig.update_layout(title="melspectrogram", width=800, height=400,
+        fig.update_layout(title="melspectrogram", width=GRAPH_WIDTH, height=GRAPH_HEIGHT,
                             xaxis = dict(showticklabels=False),
                             yaxis = dict(
                             tickmode = 'array',
@@ -83,9 +117,10 @@ def main():
         s_power, freqs = calc_spectrum(wav_element, sr)
         fig = go.Figure()
         fig.add_trace(go.Scatter(x = freqs, y = move_ave(s_power, ave_win_len), mode = 'lines'))
-        fig.update_layout(title="spectrum", width=800, height=400, 
+        fig.update_layout(title="spectrum", width=GRAPH_WIDTH, height=GRAPH_HEIGHT, 
                         xaxis = dict(title = "frequency(Hz)"), yaxis = dict(title = "power"))
         st.write(fig)
 
 if __name__ == "__main__":
+    _set_block_container_style()
     main()
