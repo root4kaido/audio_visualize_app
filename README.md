@@ -6,7 +6,7 @@
 
 1. Upload your audio data.
 
-2. From top to bottom, the waveform, mel spectrogram, and spectrum are displayed.
+2. From top to bottom, the waveform, melspectrogram, and spectrum are displayed.
 
 3. You can change the parameters from the widget in the sidebar.
 
