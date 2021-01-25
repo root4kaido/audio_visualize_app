@@ -1,5 +1,10 @@
 # audio_visualize_app
 
+With this application, you can visualize any part of the sound data (melspectrogram, spectrum). \
+It has been deployed on [Streamlit Sharing](https://www.streamlit.io/sharing), so anyone can use it from the URL below.
+
+https://share.streamlit.io/root4kaido/audio_visualize_app/main/app.py
+
 ![img](https://github.com/root4kaido/audio_visualize_app/blob/main/app.gif)
 
 ## How To Use
