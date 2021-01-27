@@ -64,7 +64,7 @@ def _set_block_container_style(
 def main():
 
     st.title('audio visualizer')
-    uploaded_file = st.sidebar.file_uploader("audio file upload") 
+    uploaded_file = st.sidebar.file_uploader("audio file upload (only monoral audio!)") 
     
 
     if uploaded_file is not None:
